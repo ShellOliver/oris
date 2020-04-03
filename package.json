@@ -1,0 +1,22 @@
+{
+  "name": "oris",
+  "version": "1.0.0",
+  "description": "preencher horas no portal rh",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "oris",
+    "portalrh",
+    "thoughtworks",
+    "time",
+    "$"
+  ],
+  "author": "vsfranca@thoughtworks.com",
+  "license": "ISC",
+  "dependencies": {
+    "taiko": "^1.0.6"
+  }
+}
