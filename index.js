@@ -49,18 +49,17 @@ async function marcacaoDia({ dia, entrada, saida }) {
 (async () => {
   try {
     await openBrowser({
-      headless: false,
-      observeTime: 10000
+      headless: false
     });
     await goto("https://portal.orisrh.com/");
     await login();
 
     await click($("#op690"));
     await click("Apontamento");
-    // await focus($('#contentPaginasInternas_txtAnoMes'));
-    // await clear($('#contentPaginasInternas_txtAnoMes'));
-    // await write('05/2020');
-    // await press('Enter');
+    await focus($('#contentPaginasInternas_txtAnoMes'));
+    await clear($('#contentPaginasInternas_txtAnoMes'));
+    await write('04/2020');
+    await press('Enter');
 
     for await (d of apontamento) {
       await marcacaoDia(d)
