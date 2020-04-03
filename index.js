@@ -15,6 +15,7 @@ const apontamento = require('./apontamento.json');
 
 const CPF = (() => { throw new Error('coloque cpf aqui') })();
 const senha = (() => { throw new Error('coloque senha aqui') })();
+const mesAno = '04/2020';
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -58,7 +59,7 @@ async function marcacaoDia({ dia, entrada, saida }) {
     await click("Apontamento");
     await focus($('#contentPaginasInternas_txtAnoMes'));
     await clear($('#contentPaginasInternas_txtAnoMes'));
-    await write('04/2020');
+    await write(mesAno);
     await press('Enter');
 
     for await (d of apontamento) {
