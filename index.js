@@ -41,5 +41,12 @@ function addEntry(field) {
 }
 
 function writeFile(data) {
-  fs.writeFileSync('./apontamento.json', JSON.stringify(data))
+  const str = JSON.stringify(data)
+    .replace(/\}(\,)?/g, "\n\t}$1\n")
+    .replace(/\[/g, "[\n")
+    .replace(/\{/g, "\t{")
+    .replace(/\{\"/g, "{\n\t\t\"")
+    .replace(/\,\"/g, ",\n\t\t\"")
+
+  fs.writeFileSync('./apontamento.json', str)
 }
