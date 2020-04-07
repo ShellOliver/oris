@@ -1,73 +1,45 @@
-const {
-  $,
-  clear,
-  click,
-  openBrowser,
-  goto,
-  focus,
-  write,
-  textBox,
-  closeBrowser,
-  press,
-} = require('taiko');
+const express = require('express')
+const fs = require('fs')
+const moment = require('moment')
+const R = require('ramda')
 
-const apontamento = require('./apontamento.json');
+const app = express()
 
-const CPF = (() => { throw new Error('coloque cpf aqui') })();
-const senha = (() => { throw new Error('coloque senha aqui') })();
-const mesAno = '04/2020';
+const PORT = process.env.PORT || '9876'
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
+app.get('/start', handleRequest('entrada'))
+app.get('/end', handleRequest('saida'))
 
-async function login() {
-  await focus(textBox({ id: 'contentCentral_txtUsuario' }));
-  await write(CPF);
-  await press('Tab')
-  await write(senha);
-  await press('Tab')
-  await write("59"); // token
-  await press('Enter');
-}
+app.listen(PORT)
 
-async function marcacaoDia({ dia, entrada, saida }) {
-  await click($('[data-marcacao="' + dia + '"] [data-horaprimeramarcacao] input'));
-  await press('Enter');
-  await write(entrada);
-  await click('Home Office');
-  await click('Confirmar');
-  await sleep(2000);
 
-  await click($('[data-marcacao="' + dia + '"] [data-horasegundamarcacao] input'));
-  await press('Enter');
-  await write(saida);
-  await click('Home Office');
-  await click('Confirmar');
-  await sleep(2000);
-}
+function handleRequest(field) {
+  return function (req, res) {
+    const apontamento = addEntry(field)
+    writeFile(apontamento)
 
-(async () => {
-  try {
-    await openBrowser({
-      headless: false
-    });
-    await goto("https://portal.orisrh.com/");
-    await login();
-
-    await click($("#op690"));
-    await click("Apontamento");
-    await focus($('#contentPaginasInternas_txtAnoMes'));
-    await clear($('#contentPaginasInternas_txtAnoMes'));
-    await write(mesAno);
-    await press('Enter');
-
-    for await (d of apontamento) {
-      await marcacaoDia(d)
-    }
-  } catch (error) {
-    console.error(error);
-  } finally {
-    closeBrowser();
+    res.status(200).end()
   }
-})();
+}
+
+function addEntry(field) {
+  const date = moment().format('DD/MM/YYYY')
+  const time = moment().format('HHmm')
+  const findCurrentDay = R.find(R.propEq('dia', date))
+
+  const apontamento = JSON.parse(fs.readFileSync('./apontamento.json'))
+  const currentDay = findCurrentDay(apontamento)
+  if (!currentDay) {
+    apontamento.push({
+      dia: date,
+      [field]: time,
+    })
+  } else {
+    currentDay[field] = time
+  }
+  return apontamento
+}
+
+function writeFile(data) {
+  fs.writeFileSync('./apontamento.json', JSON.stringify(data))
+}
