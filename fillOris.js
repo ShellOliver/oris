@@ -15,7 +15,7 @@ const apontamento = require('./apontamento.json');
 
 const CPF = (() => { throw new Error('coloque cpf aqui') })();
 const senha = (() => { throw new Error('coloque senha aqui') })();
-const mesAno = '04/2020';
+const mesAno = '07/2020';
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
